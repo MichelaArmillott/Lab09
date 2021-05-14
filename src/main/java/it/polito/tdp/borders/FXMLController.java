@@ -2,6 +2,11 @@
 package it.polito.tdp.borders;
 
 import java.net.URL;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -21,7 +26,9 @@ public class FXMLController {
 
     @FXML // URL location of the FXML file that was given to the FXMLLoader
     private URL location;
-
+    
+    @FXML
+    private ComboBox<Country> cmbBox;
     @FXML // fx:id="txtAnno"
     private TextField txtAnno; // Value injected by FXMLLoader
 
@@ -48,6 +55,7 @@ public class FXMLController {
     		return;
     	}
     	model.creaGrafo(anno);
+    	cmbBox.getItems().addAll(model.getCountry());
     	txtResult.appendText("grafo creato! \n");
     	txtResult.appendText("gli archi sono "+model.getNArchi()+"\n");
     	txtResult.appendText("i vertici sono "+model.getNVertici()+"\n");
@@ -57,14 +65,37 @@ public class FXMLController {
     		txtResult.appendText(c+" : "+countries.get(c)+"\n");
     }
 
+    
+    @FXML
+    void doRaggiungibili(ActionEvent event) {
+    	txtResult.clear();
+    	Country partenza=cmbBox.getValue();
+    	if(partenza==null) {
+    		txtResult.setText("devi scegliere uno stato");
+    		return ;
+    	}
+    	List<Country>stampa=model.trovaRaggiungibili(partenza);
+    	if(stampa==null) {
+    		txtResult.setText("non ci sono stati raggiungibili");
+    		return;
+    	}
+    	txtResult.appendText("ecco fli stati raggiungibili : \n"+stampa.size()+"\n");
+    	for(Country c:stampa) {
+    		txtResult.appendText(c+"\n");
+    	}
+    	
+
+    }
+
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
         assert txtAnno != null : "fx:id=\"txtAnno\" was not injected: check your FXML file 'Scene.fxml'.";
         assert txtResult != null : "fx:id=\"txtResult\" was not injected: check your FXML file 'Scene.fxml'.";
+        assert cmbBox != null : "fx:id=\"cmbBox\" was not injected: check your FXML file 'Scene.fxml'.";
 
     }
     
     public void setModel(Model model) {
-    	this.model = model;
-    }
+    	this.model = model;}
+    	
 }

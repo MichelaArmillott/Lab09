@@ -1,7 +1,10 @@
 package it.polito.tdp.borders.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jgrapht.Graphs;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
@@ -9,6 +12,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
+import org.jgrapht.traverse.BreadthFirstIterator;
 
 import it.polito.tdp.borders.db.BordersDAO;
 
@@ -68,5 +72,23 @@ public class Model {
 					return 0;
 				ConnectivityInspector<Country,DefaultEdge> ci=new ConnectivityInspector<>(grafo);
 				return ci.connectedSets().size();
+			}
+			
+			//vertici per la comboBox
+			public Set <Country>getCountry(){
+				return grafo.vertexSet();
+			}
+
+			public List<Country> trovaRaggiungibili(Country partenza) {
+				List<Country>stampa=new ArrayList<>();
+				BreadthFirstIterator<Country, DefaultEdge> bfv = 
+						new BreadthFirstIterator<>(this.grafo, partenza) ;
+				
+				while(bfv.hasNext()) {
+					Country c=bfv.next() ; 
+					stampa.add(c);
+					c = bfv.getParent(c) ;
+				}
+				return stampa;
 			}
 }
